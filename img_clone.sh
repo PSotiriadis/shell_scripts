@@ -1,19 +1,19 @@
-# #!/bin/bash
-# ########################################################################
-# # @file         img_clone.sh.sh
-# # @author       Prodromos Sotiriadis
-# # @version      V1.0.0
-# # @date         30.10.2024
-# # @copyright    2020-2021
-# # @description
-# # @argument
-# ########################################################################
-# # @history
-# #      - V1.0.0 30.10.2024 Prodromos Sotiriadis
-# #         ~ Initial Release
-# ########################################################################
-# # @todo Nothing
-# ########################################################################
+#!/bin/bash
+########################################################################
+# @file         img_clone.sh.sh
+# @author       Prodromos Sotiriadis
+# @version      V1.0.0
+# @date         30.10.2024
+# @copyright    2020-2021
+# @description
+# @argument
+########################################################################
+# @history
+#      - V1.0.0 30.10.2024 Prodromos Sotiriadis
+#         ~ Initial Release
+########################################################################
+# @todo Nothing
+########################################################################
 
 # Prompt for the main disk name
 read -p "Enter the main disk name (e.g., sda, sdb): " disk_name
