@@ -1,80 +1,46 @@
-#!/bin/bash
-########################################################################
-# @file         img_clone.sh.sh
-# @author       Prodromos Sotiriadis
-# @version      V1.0.0
-# @date         30.10.2024
-# @copyright    2020-2021
-# @description
-# @argument
-########################################################################
-# @history
-#      - V1.0.0 30.10.2024 Prodromos Sotiriadis
-#         ~ Initial Release
-########################################################################
-# @todo Nothing
-########################################################################
+# #!/bin/bash
+# ########################################################################
+# # @file         img_clone.sh.sh
+# # @author       Prodromos Sotiriadis
+# # @version      V1.0.0
+# # @date         30.10.2024
+# # @copyright    2020-2021
+# # @description
+# # @argument
+# ########################################################################
+# # @history
+# #      - V1.0.0 30.10.2024 Prodromos Sotiriadis
+# #         ~ Initial Release
+# ########################################################################
+# # @todo Nothing
+# ########################################################################
 
-# Color definitions for output
-NOCOLOR="\033[0m"
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-ORANGE="\033[0;33m"
-BLUE="\033[0;34m"
-PURPLE="\033[0;35m"
-CYAN="\033[0;36m"
-LIGHT_GRAY="\033[0;37m"
-DARK_GRAY="\033[1;30m"
-LIGHT_RED="\033[1;31m"
-LIGHT_GREEN="\033[1;32m"
-YELLOW="\033[1;33m"
-LIGHT_BLUE="\033[1;34m"
-LIGHT_PURPLE="\033[1;35m"
-LIGHT_CYAN="\033[1;36m"
-WHITE="\033[1;37m"
+# Prompt for the main disk name
+read -p "Enter the main disk name (e.g., sda, sdb): " disk_name
 
+# Initialize an empty array for formats
+formats=()
+# Initialize an empty array for partition names
+part_names=()
 
-
-echo "Clone image process will be started"
-echo "In system there is following disk information:"
-echo "${YELLOW}"
-df
-echo "${NOCOLOR}"
-echo "${NOCOLOR}Choose which disk do you want to clone (i.e. sda, sdb, sdc???)" 
-read choosen_disk
-echo "You choose ${LIGHT_CYAN} $choosen_disk${NOCOLOR} as disk to clone"
-
-# Capsule the choosen disk and look how many partitions it has
-echo "${YELLOW}"
-lsblk -i   
-df_info=$(lsblk -l --noheadings -o NAME,FSTYPE /dev/sdc )
-echo $df_info
-echo "${NOCOLOR}"
-
-# Initialize variables to store format types
-sdc1_format=""
-sdc2_format=""
-
-# Convert the string into an array
-# read -r -a array <<< "$df_info"
-readarray -t array <<< "$df_info"
-
-
-# Loop through the array to find and assign format values
-for (( i=0; i<${#array[@]}; i++ )); do
-    # Print each element for debugging
-    echo "Element $i: ${array[i]}"
-    
-    # Check if the current element is sdc1 or sdc2, then capture the next element
-    if [ "${array[i]}" = "sdc1" ]; then
-        sdc1_format=${array[i+1]}   # Assign the format for sdc1
-        echo "Found sdc1 format: $sdc1_format"
-    elif [ "${array[i]}" = "sdc2" ]; then
-        sdc2_format=${array[i+1]}   # Assign the format for sdc2
-        echo "Found sdc2 format: $sdc2_format"
+# Use `lsblk` to get the FSTYPE of the disk and its partitions, then parse it into the array
+while IFS= read -r line; do
+    # Extract the FSTYPE (filesystem type) from each line and add it to the array
+    format=$(echo "$line" | awk '{print $2}')
+    if [[ -n $format ]]; then
+        formats+=("$format")
     fi
+done < <(lsblk -r -o NAME,FSTYPE | grep "^${disk_name}[0-9]* ")
+
+# Print the contents of the array for verification
+echo "Filesystem formats for $disk_name and its partitions:"
+for i in "${!formats[@]}"; do
+    part_names[i]=${disk_name}$((i+1))
+    # Check if the current format is vfat and change it to fat32
+    if [ "${formats[$i]}" = "vfat" ]; then
+        formats[$i]="fat32"
+    fi
+    echo "partition ${part_names[$i]} has the format ${formats[$i]}"
+    # sudo partclone.${formats[$i]} -c -s /dev/${part_names[$i]} -o ~/system-part.img
 done
 
-# Output to verify variables are set correctly
-echo "Final sdc1 format: $sdc1_format"
-echo "Final sdc2 format: $sdc2_format"
