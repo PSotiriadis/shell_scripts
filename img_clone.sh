@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################
-# @file         img_clone.sh.sh
+# @file         img_clone.sh
 # @author       Prodromos Sotiriadis
 # @version      V1.0.0
 # @date         30.10.2024
