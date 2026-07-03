@@ -13,6 +13,43 @@ A list with the commited shell script is here:
 ---
 
 # Script detailed description
+
+<b>ros2_multi_launcher.sh</b>
+
+Start multiple ROS 2 launch files and optional ros2 run executables in separate GNOME Terminal windows. 
+
+Options:
+  -w, --workspace PATH     ROS 2 workspace path. Default: ${WORKSPACE}
+  -d, --domain-id ID       Optional ROS_DOMAIN_ID.
+  -h, --help               Show this help.
+
+  Example:
+  ./${SCRIPT_NAME} --workspace ~/clearpath_ws --domain-id 42
+
+To define which files to launch or which executable to run make changes in this section:
+
+    # -----------------------------
+    # User configuration
+    # -----------------------------
+
+    LAUNCH_COMMANDS=(
+    # Replace with your real launch files.
+    "ros2 launch dummy_robot_bringup dummy_robot_bringup.launch.py"
+    "ros2 launch dummy_robot_bringup dummy_robot_bringup.launch.py"
+
+    # Examples:
+    # "ros2 launch my_robot_bringup camera_1_points_bridge.launch.py"
+    # "ros2 launch my_robot_bringup camera_2_points_bridge.launch.py"
+    )
+
+    RUN_COMMANDS=(
+    # Optional ros2 run executables.
+    # "ros2 run teleop_twist_keyboard teleop_twist_keyboard"
+    # "ros2 run my_package my_node --ros-args -p use_sim_time:=true"
+    )
+ 
+
+
 <b>hdr_tmpl.sh</b>
 
 This script creates a shell script file with given filename as first argument by execution, with a standard header. If file exists or no filename isgiven as first argument, this script makes nothing.
